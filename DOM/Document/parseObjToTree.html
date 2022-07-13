@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let data = {
+        "Рыбы": {
+            "форель": {},
+            "лосось": {}
+        },
+
+        "Деревья": {
+            "Огромные": {
+            "секвойя": {},
+            "дуб": {}
+            },
+            "Цветковые": {
+            "яблоня": {},
+            "магнолия": {}
+            }
+        }
+        };
+
+
+        function parseObjToTree(obj) {
+            let initialUl = document.createElement('ul');
+            document.body.insertAdjacentHTML("beforeend", '<h3>Tree</h3>');
+            document.body.append(initialUl);
+
+            function parseIteration(node, obj, key) {
+                let newLi = document.createElement('li');
+                newLi.textContent = key;    
+                node.append(newLi);
+
+                if (obj[key] instanceof Object && Object.keys(obj[key]).length > 0) {
+                    let newUl = document.createElement('ul');
+                    newLi.append(newUl);
+                    for (const childKey in obj[key]) {
+                        parseIteration(newUl, obj[key], childKey);
+                    }
+                }
+            };
+            
+            for (const key in obj) {
+                parseIteration(initialUl, obj, key);
+            }
+        };
+
+        parseObjToTree(data);
+    </script>
+</body>
+</html>

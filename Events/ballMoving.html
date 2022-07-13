@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+      #field {
+        width: 400px;
+        border: 10px groove black;
+        background-color: #00FF00;
+        position: relative;
+      }
+  
+      #ball {
+        position: absolute;
+      }
+    </style>
+</head>
+<body>
+    <div id="field">
+        <img src="https://en.js.cx/clipart/ball.svg" id="ball"> . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    </div>
+
+    <script>
+        function nextPoint(field, ball, curPoint) {
+            let ballDiameter = ball.offsetWidth;
+
+            let startPoint = {x: 0, y: 0};
+            let finalPoint = {x: field.clientWidth  - ballDiameter, y: field.clientHeight - ballDiameter};
+
+            let pointsArray = getPointsArray(startPoint, finalPoint, 24);
+            
+            return pointsArray[pointsArray.findIndex((x, y) => x === curPoint.x && y === curPoint.y) + 1];
+        };
+
+        function getPointsArray(startPoint, finalPoint, steps) {
+            let xRange = finalPoint.x - startPoint.x;
+            let yRange = finalPoint.y - startPoint.y;
+
+            let array = [];
+
+            let prevPoint = Object.assign({}, startPoint);
+
+
+            for (let index = 0; index < steps; index++) {
+                let newElem = { x:prevPoint.x + (xRange / steps), y:prevPoint.y + (yRange / steps) };
+                array.push(newElem);
+                prevPoint = Object.assign({}, newElem);
+            }
+            return array;
+        };
+
+        function getGeneralPointsArray(stepsByStage, ...points) {
+            let allPoints = Array.from(points);
+
+            let resultArray = [];
+
+            for (let index = 0; index < allPoints.length - 1; index++) {
+                resultArray.push(...getPointsArray(allPoints[index], allPoints[index + 1], stepsByStage));
+            }
+
+            return resultArray;
+        }
+
+        let ballDiameter = ball.offsetWidth;
+        let startPoint = {x: 0, y: 0};
+        let secondPoint = {x: field.clientWidth - ballDiameter, y: field.clientHeight - ballDiameter};
+        let thirdPoint = {x: field.clientWidth  - ballDiameter, y: 0};
+        let fourthPoint = {x: 0, y: field.clientHeight - ballDiameter};
+
+        let generalPointsArray = getGeneralPointsArray(48, startPoint, secondPoint, thirdPoint, fourthPoint, startPoint);
+
+        let index = 0;
+
+        let timer = setInterval(() => {
+            let compStyles = getComputedStyle(ball);
+            ball.style.top = generalPointsArray[index].y + 'px';
+            ball.style.left = generalPointsArray[index].x + 'px';
+            index++;
+            if (index >= generalPointsArray.length) {
+                clearInterval(timer);
+            }
+        }, 21);
+
+
+    </script>
+</body>
+</html>
